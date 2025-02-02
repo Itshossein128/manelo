@@ -14,8 +14,8 @@ export default function SubMenu({ categories, imgUrl, className }: Tprops) {
       }
       style={{ backdropFilter: "blur(1px)" }}
     >
-      <div className='max-w-[815px] w-full border rounded bg-white p-5 flex items-start group-hover:pointer-events-auto gap-5 !font-normal'>
-        <div className='grid grid-cols-[230px,230px] gap-x-5 *:py-4 *:leading-5 -my-4 text-subtitle-3 [&>a:hover]:text-primary-dark'>
+      <div className='max-w-[815px] w-full border rounded-sm bg-white p-5 flex items-start group-hover:pointer-events-auto gap-5 font-normal!'>
+        <div className='grid grid-cols-[230px_230px] gap-x-5 *:py-4 *:leading-5 -my-4 text-subtitle-3 [&>a:hover]:text-primary-dark'>
           {categories.map(({ title, href }, index) => {
             return (
               <Link
