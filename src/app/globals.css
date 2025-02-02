@@ -23,3 +23,18 @@
     @apply text-h6 font-bold;
   }
 }
+
+.submenu-container > div::before {
+  content: "";
+  height: 30px;
+  position: absolute;
+  bottom: 0;
+  width: 100vw;
+  top: -30px;
+  left: 0;
+  pointer-events: none;
+}
+
+li:has(.submenu-container):hover .submenu-container > div::before {
+  pointer-events: auto;
+}
