@@ -1,0 +1,13 @@
+.dropdown-container > div::before {
+  content: "";
+  height: 30px;
+  position: absolute;
+  width: 100%;
+  top: -30px;
+  left: 0;
+  pointer-events: none;
+}
+
+.group:has(.dropdown-container):hover .dropdown-container > div::before {
+  pointer-events: auto;
+}
