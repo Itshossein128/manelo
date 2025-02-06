@@ -1,0 +1,24 @@
+import "./hoverDropDown.css";
+import { ReactElement } from "react";
+
+type Tprops = {
+  interactiveElement: ReactElement;
+  dropDown: ReactElement;
+  containerClassName?: string;
+};
+export default function HoverDropDown({
+  interactiveElement,
+  dropDown,
+  containerClassName = "",
+}: Tprops) {
+  return (
+    <div className='group'>
+      <div className='cursor-pointer'>{interactiveElement}</div>
+      <div
+        className={`flex absolute z-20 top-[81px] left-0 h-[calc(100vh-110px)] bg-black/60 bg-opacity-90 items-start gap-5 w-full dropdown-container pointer-events-none opacity-0 transition group-hover:opacity-100 [&>div]:group-hover:pointer-events-auto backdrop-blur-xs ${containerClassName}`}
+      >
+        {dropDown}
+      </div>
+    </div>
+  );
+}

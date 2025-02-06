@@ -1,0 +1,27 @@
+@reference '../../../globals.css';
+
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: "";
+  border-bottom: 4px transparent solid;
+  transition: 150ms;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+
+.nav-link:hover {
+  @apply text-primary-dark transition;
+}
+
+.nav-link:hover::after {
+  @apply bg-primary-dark;
+}
+
+.group:hover .nav-link::after {
+  @apply bg-primary-dark;
+}
