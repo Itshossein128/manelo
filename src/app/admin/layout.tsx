@@ -1,4 +1,4 @@
-export default function DashboardLayout({
+export default function AdminDashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

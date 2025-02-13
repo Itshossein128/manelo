@@ -1,6 +1,6 @@
 // services/category.ts
 import axios from "axios";
-import { TCategory } from "../dashboard/categories/page";
+import { TCategory } from "../admin/categories/page";
 
 type TCategoryBody = Omit<TCategory, '_id'>
 // admin APIs
