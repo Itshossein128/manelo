@@ -1,130 +1,120 @@
 /** @type {import('tailwindcss').Config} */
+import daisyui from "daisyui";
+
 module.exports = {
-  content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
+  content: [
+    // "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    // "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    // "./components/**/*.{js,ts,jsx,tsx,mdx}",
+
+    // Or if using `src` directory:
+    "./src/**/*.{js,ts,jsx,tsx,mdx,css}",
+  ],
   theme: {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#7a5af8",
-          dark: "#4a1fb8",
-          darker: "#0c0c0c",
+          DEFAULT: "var(--color-primary)",
+          dark: "var(--color-primary-dark)",
+          darker: "var(--color-primary-darker)",
         },
         shade: {
-          DEFAULT: "#140832",
-          light: "#28116",
-          dark: "#361786",
-          darker: "#4a1fb8",
-          darkest: "#5825da",
+          DEFAULT: "var(--color-shade)",
+          light: "var(--color-shade-light)",
+          dark: "var(--color-shade-dark)",
+          darker: "var(--color-shade-darker)",
+          darkest: "var(--color-shade-darkest)",
         },
         tint: {
-          lightest: "#f2eefc",
-          lighter: "#cbbbf4",
-          light: "#a489eb",
-          DEFAULT: "#7e56e3",
-          dark: "#6435dd",
+          lightest: "var(--color-tint-lightest)",
+          lighter: "var(--color-tint-lighter)",
+          light: "var(--color-tint-light)",
+          DEFAULT: "var(--color-tint)",
+          dark: "var(--color-tint-dark)",
         },
         gray: {
-          200: "#cccccc",
-          300: "#c2c2c2",
-          400: "#999999",
-          500: "#8f8f8f",
-          600: "#858585",
-          DEFAULT: "#d6d6d6",
-          lightest: "#ffffff",
-          lighter: "#f5f5f5",
-          light: "#ebebeb",
-          normal: "#e0e0e0",
-          dark: "#b8b8b8",
-          darker: "#adadad",
-          darkest: "#a3a3a3",
+          DEFAULT: "var(--color-gray)",
+          lightest: "var(--color-gray-lightest)",
+          lighter: "var(--color-gray-lighter)",
+          light: "var(--color-gray-light)",
+          normal: "var(--color-gray-normal)",
+          dark: "var(--color-gray-dark)",
+          darker: "var(--color-gray-darker)",
+          darkest: "var(--color-gray-darkest)",
+          200: "var(--color-gray-200)",
+          300: "var(--color-gray-300)",
+          400: "var(--color-gray-400)",
+          500: "var(--color-gray-500)",
+          600: "var(--color-gray-600)",
         },
         black: {
-          DEFAULT: "#667085",
-          dark: "#475467",
-          darker: "#344054",
-          darkest: "#1d2939",
-          "extra-dark": "#101828",
-          light: "#fcfcfd",
-          lighter: "#f2f4f7",
-          lightest: "#f9fafb",
-          "extra-light": "#e4e7ec",
-          muted: "#d0d5dd",
-          dim: "#98a2b3",
+          DEFAULT: "var(--color-black)",
+          dark: "var(--color-black-dark)",
+          darker: "var(--color-black-darker)",
+          darkest: "var(--color-black-darkest)",
+          extraDark: "var(--color-black-extra-dark)",
+          light: "var(--color-black-light)",
+          lighter: "var(--color-black-lighter)",
+          lightest: "var(--color-black-lightest)",
+          extraLight: "var(--color-black-extra-light)",
+          muted: "var(--color-black-muted)",
+          dim: "var(--color-black-dim)",
         },
         state: {
-          error: "#b81f40",
-          success: "#8db81f",
-          info: "#004ab9",
-          warning: "#ffc000",
+          error: "var(--color-state-error)",
+          success: "var(--color-state-success)",
+          info: "var(--color-state-info)",
+          warning: "var(--color-state-warning)",
         },
       },
       fontSize: {
-        "display-1": "74px",
-        "display-2": "64px",
-        "display-3": "56px",
-        h1: "40px",
-        h2: "32px",
-        h3: "24px",
-        h4: "20px",
-        h5: "18px",
-        h6: "16px",
-        "subtitle-1": "20px",
-        "subtitle-2": "18px",
-        "subtitle-3": "16px",
-        "body-1": "18px",
-        "body-2": "16px",
-        "body-3": "14px",
-        "button-1": "16px",
-        "button-2": "14px",
-        "caption-1": "14px",
-        "caption-2": "12px",
-        "overline-1": "14px",
-        "overline-2": "12px",
+        "display-1": "var(--text-display-1)",
+        "display-2": "var(--text-display-2)",
+        "display-3": "var(--text-display-3)",
+        h1: "var(--text-h1)",
+        h2: "var(--text-h2)",
+        h3: "var(--text-h3)",
+        h4: "var(--text-h4)",
+        h5: "var(--text-h5)",
+        h6: "var(--text-h6)",
+        "subtitle-1": "var(--text-subtitle-1)",
+        "subtitle-2": "var(--text-subtitle-2)",
+        "subtitle-3": "var(--text-subtitle-3)",
+        "body-1": "var(--text-body-1)",
+        "body-2": "var(--text-body-2)",
+        "body-3": "var(--text-body-3)",
+        "button-1": "var(--text-button-1)",
+        "button-2": "var(--text-button-2)",
+        "caption-1": "var(--text-caption-1)",
+        "caption-2": "var(--text-caption-2)",
+        "overline-1": "var(--text-overline-1)",
+        "overline-2": "var(--text-overline-2)",
       },
       fontFamily: {
-        "times-new-roman": ["Times New Roman", "serif"],
-        "plus-jakarta-display": ["Plus Jakarta Display", "sans-serif"],
+        "times-new-roman": "var(--font-times-new-roman)",
+        "plus-jakarta-display": "var(--font-plus-jakarta-display)",
+      },
+      container: {
+        center: true,
+        padding: {
+          DEFAULT: "1rem",
+          sm: "2rem",
+          lg: "4rem",
+          xl: "5rem",
+          "2xl": "6rem",
+        },
       },
     },
   },
-  plugins: [
-    function ({ addComponents }) {
-      addComponents({
-        ".container": {
-          marginInline: "auto",
-          paddingInline: "1rem",
-          "@screen sm": {
-            paddingInline: "2rem",
-          },
-          "@screen lg": {
-            paddingInline: "4rem",
-          },
-          "@screen xl": {
-            paddingInline: "5rem",
-          },
-          "@screen 2xl": {
-            paddingInline: "6rem",
-          },
-        },
-        h1: {
-          "@apply text-h1 font-bold font-times-new-roman": {},
-        },
-        h2: {
-          "@apply text-h2 font-bold font-times-new-roman": {},
-        },
-        h3: {
-          "@apply text-h3 font-bold font-times-new-roman": {},
-        },
-        h4: {
-          "@apply text-h4 font-bold font-times-new-roman": {},
-        },
-        h5: {
-          "@apply text-h5 font-bold font-times-new-roman": {},
-        },
-        h6: {
-          "@apply text-h6 font-bold font-times-new-roman": {},
-        },
-      });
-    },
-  ],
+  plugins: [daisyui],
+  daisyui: {
+    themes: false, // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
+    darkTheme: "light", // name of one of the included themes for dark mode
+    base: true, // applies background color and foreground color for root element by default
+    styled: true, // include daisyUI colors and design decisions for all components
+    utils: true, // adds responsive and modifier utility classes
+    prefix: "", // prefix for daisyUI classnames (components, modifiers and responsive class names. Not colors)
+    logs: true, // Shows info about daisyUI version and used config in the console when building your CSS
+    themeRoot: ":root", // The element that receives theme color CSS variables
+  },
 };

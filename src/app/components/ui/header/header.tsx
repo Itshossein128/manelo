@@ -1,29 +1,29 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import HoverDropDown from "../dropdown/hoverDropDown/hoverDropDown";
 import NavMenuDropDown from "../dropdown/navMenuDropDown/navMenuDropDown";
-import "./header.css";
-import HeaderButtonDropDown from "../dropdown/headerButtonDropDown/headerButtonDropDown";
 import ClickDropDown from "../dropdown/clickDropDown/clickDropDown";
-
-const categories = [
-  { title: "COATE & JACKETS", href: "test" },
-  { title: "TOPS &BLOUSES", href: "test" },
-  { title: "TRENCH COAT", href: "test" },
-  { title: "SWEATSHIRTS", href: "test" },
-  { title: "DRESSES", href: "test" },
-  { title: "SKORTS", href: "test" },
-  { title: "COLLECTION", href: "test" },
-  { title: "JUMPSUIT", href: "test" },
-  { title: "NEW ARRIVALS", href: "test" },
-  { title: "PANTS & JEANS", href: "test" },
-  { title: "ALL", href: "test" },
-  { title: "COATS", href: "test" },
-];
+import { useEffect, useState } from "react";
+import { getUserCategoryApi } from "@/app/services/category";
+import { TCategory } from "@/app/admin/categories/page";
 
 export default function Header() {
+  const [menCategories, setMenCategories] = useState<TCategory[]>([]);
+  const [womenCategories, setWomenCategories] = useState<TCategory[]>([]);
+  useEffect(() => {
+    getUserCategoryApi().then((res) => {
+      setMenCategories(
+        res.data.filter((category: TCategory) => category.gender === "men")
+      );
+      setWomenCategories(
+        res.data.filter((category: TCategory) => category.gender === "women")
+      );
+    });
+  }, []);
+
   return (
-    <header className='sticky top-0 z-10 grid grid-cols-[1fr_auto_1fr] border-t-[29px] border-primary-dark border-b-[5px] py-[10px] px-[101px]'>
+    <header className='sticky top-0 z-10 bg-white shadow-md grid grid-cols-[1fr_auto_1fr] border-t-[29px] border-primary-dark border-b-[5px] py-[10px] px-[101px]'>
       <div className='flex gap-[19px] items-center'>
         <Image
           src={"/manelo-logo.png"}
@@ -49,7 +49,7 @@ export default function Header() {
               }
               dropDown={
                 <NavMenuDropDown
-                  categories={categories}
+                  categories={womenCategories}
                   imgUrl={"/woman-submenu.png"}
                 />
               }
@@ -69,7 +69,7 @@ export default function Header() {
               }
               dropDown={
                 <NavMenuDropDown
-                  categories={categories}
+                  categories={menCategories}
                   imgUrl={"/man-submenu.png"}
                 />
               }
@@ -119,11 +119,11 @@ export default function Header() {
         <ClickDropDown
           interactiveElement={
             <Image
-            src={"/person-icon.svg"}
-            alt='search'
-            width={36}
-            height={36}
-          ></Image>
+              src={"/person-icon.svg"}
+              alt='search'
+              width={36}
+              height={36}
+            ></Image>
           }
         />
 

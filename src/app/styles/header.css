@@ -1,4 +1,3 @@
-@reference '../../../globals.css';
 
 .nav-link {
   position: relative;
@@ -15,13 +14,14 @@
 }
 
 .nav-link:hover {
-  @apply text-primary-dark transition;
+  color: var(--color-primary-dark);
+  @apply transition;
 }
 
 .nav-link:hover::after {
-  @apply bg-primary-dark;
+  background: var(--color-primary-dark);
 }
 
 .group:hover .nav-link::after {
-  @apply bg-primary-dark;
+  background: var(--color-primary-dark);
 }

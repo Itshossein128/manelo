@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { plusJakartaSans } from "./utility/fonts";
-import Header from "./components/ui/header/header";
+import { plusJakartaSans } from "@/utils/fonts";
+import QueryProvider from "./components/QueryProvider";
+import { ToastContainer } from "react-toastify";
+import { AlertProvider } from "./contexts/alertContext";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,8 +18,12 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={`antialiased ${plusJakartaSans.className}`}>
-        <Header />
-        {children}
+        <AlertProvider>
+          <QueryProvider>
+            {children}
+          </QueryProvider>
+          <ToastContainer position='bottom-right' />
+        </AlertProvider>
       </body>
     </html>
   );
