@@ -8,10 +8,10 @@ export default function HeaderSearch() {
           <h3 className=''>SEARCH</h3>
           <button className='cursor-pointer'>
             <Image
-              src={"./close-icon.svg"}
               width={24}
               height={24}
-              alt='close'
+              src={"/close-icon.svg"}
+              alt="close"
             />
           </button>
         </div>
