@@ -1,5 +1,5 @@
 import Select from "@/app/components/ui/select/select";
-import { postAdminCategoryApi } from "@/app/services/category";
+import { postAdminCategoryApi } from "@/app/services/categoryService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FormEvent, useState } from "react";
 import { toast } from "react-toastify";

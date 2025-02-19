@@ -21,6 +21,7 @@
       "@/hooks/*": ["./app/hooks/*"],
       "@/contexts/*": ["./app/contexts"],
       "@/components/*": ["./app/components/*"],
+      "@/types/*": ["./app/types/*"],
       "@/models/*": ["./app/utils/models/*"]
     }
   },

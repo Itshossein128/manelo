@@ -1,4 +1,3 @@
-// services/category.ts
 import axios from "axios";
 import { TCategory } from "../admin/categories/page";
 

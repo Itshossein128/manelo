@@ -6,7 +6,7 @@ function Header() {
       <Image
         src={"/manelo.png"}
         width={71}
-        height={56}
+        height={17}
         alt=''
         className='w-30'
       />
