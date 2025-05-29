@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { InputField } from "@/components/InputField";
+import { signIn } from "next-auth/react";
 
 // Define the schema for form validation
 const signupSchema = z
@@ -36,23 +37,29 @@ export default function Signup() {
 
   const onSubmit: SubmitHandler<SignupFormInputs> = async (data) => {
     try {
-      const response = await fetch("/api/auth/signup", {
+      // Step 1: ثبت‌نام کاربر
+      const signupResponse = await fetch("/api/auth/signup", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: data.email, password: data.password }),
+      });
+      if (!signupResponse.ok) {
+        const errorData = await signupResponse.json();
+        alert(errorData.error || "Signup failed");
+        return;
+      }
+
+      // Step 2: لاگین خودکار با Auth.js
+      const signInResponse = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false, // جلوگیری از ریدایرکت خودکار
       });
 
-      if (response.ok) {
-        // Redirect to dashboard after successful signup and login
+      if (signInResponse?.ok) {
         router.push("/dashboard");
       } else {
-        const errorData = await response.json();
-        alert(errorData.message || "Signup failed");
+        alert(signInResponse?.error || "Login after signup failed");
       }
     } catch (error) {
       console.error("Signup error:", error);
@@ -61,7 +68,7 @@ export default function Signup() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center  bg-gray-100">
+    <div className="flex flex-col items-center justify-center bg-gray-100">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white p-8 rounded-lg shadow-md w-96"

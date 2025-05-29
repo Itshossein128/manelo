@@ -1,14 +1,19 @@
 "use client";
 import { ReactElement, useState } from "react";
+<<<<<<< HEAD:src/components/ui/dropdown/clickDropDown/clickDropDown.tsx
 import "@/components/ui/header/headerSearch";
+=======
+>>>>>>> 604a5fc953563d3b3f26da11d335c99a9144a88d:src/app/components/ui/dropdown/clickDropDown/clickDropDown.tsx
 import HeaderButtonDropDown from "../headerButtonDropDown/headerButtonDropDown";
 type Tprops = {
   interactiveElement: ReactElement;
   containerClassName?: string;
+  dropDownContent: ReactElement;
 };
 export default function ClickDropDown({
   interactiveElement,
   containerClassName = "",
+  dropDownContent,
 }: Tprops) {
   const [dropDown, setDropDown] = useState(false);
   return (
@@ -27,7 +32,9 @@ export default function ClickDropDown({
         <HeaderButtonDropDown
           title={`SEARCH`}
           setController={() => setDropDown(false)}
-        />
+        >
+          {dropDownContent}
+        </HeaderButtonDropDown>
       </div>
     </div>
   );

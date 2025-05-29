@@ -17,7 +17,7 @@ import { useDeleteCategory } from "@/hooks/useDeleteCategory";
 import { useAlertContext } from "@/app/contexts/alertContext";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getAdminCategoryApi } from "@/app/services/category";
+import { getAdminCategoryApi } from "@/app/services/categoryService";
 
 const columnHelper = createColumnHelper<TCategory>();
 

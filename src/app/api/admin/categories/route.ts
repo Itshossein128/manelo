@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import dbConnect from "@/utils/db";
-import Category from "@/models/Category";
+import client from "@/utils/db";
+import { ObjectId } from "mongodb";
 
 interface CategoryDocument {
     _id?: string;
@@ -50,7 +50,6 @@ function handleApiError(error: unknown): NextResponse {
     let errorDetails: any = null;
 
     if (error instanceof z.ZodError) {
-        // Handle Zod validation errors
         statusCode = 400;
         errorMessage = error.errors[0].message;
         errorDetails = error.errors.map((e) => ({
@@ -58,18 +57,13 @@ function handleApiError(error: unknown): NextResponse {
             message: e.message,
         }));
     } else if (error instanceof ApiError) {
-        // Handle custom ApiError
         statusCode = error.statusCode;
         errorMessage = error.message;
     } else if (error instanceof Error) {
-        // Handle generic errors
         errorMessage = error.message;
 
-        // Handle MongoDB duplicate key error
         if (error.name === "MongoServerError" && (error as any).code === 11000) {
             statusCode = 409;
-
-            // Check which field caused the duplicate error
             if ((error as any).keyPattern?.name) {
                 errorMessage = "A category with this name already exists for the specified gender";
             } else if ((error as any).keyPattern?.href) {
@@ -78,7 +72,6 @@ function handleApiError(error: unknown): NextResponse {
         }
     }
 
-    // Return a consistent error response
     return NextResponse.json(
         {
             error: errorMessage,
@@ -87,16 +80,15 @@ function handleApiError(error: unknown): NextResponse {
         { status: statusCode }
     );
 }
+
 export async function GET(request: NextRequest) {
     try {
-        await dbConnect();
-
+        const db = client.db();
         const { searchParams } = new URL(request.url);
         const gender = searchParams.get("gender") as CategoryDocument["gender"] | null;
 
         const query = gender ? { gender } : {};
-
-        const categories = await Category.find(query).lean<CategoryDocument[]>();
+        const categories = await db.collection('categories').find(query).toArray();
 
         return NextResponse.json(
             {
@@ -111,16 +103,13 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
     try {
-        await dbConnect();
-
+        const db = client.db();
         const body = await request.json();
         const validatedData = CategorySchema.parse(body) as CategoryInput;
 
-        // Normalize the href to lowercase
         validatedData.href = validatedData.href.toLowerCase();
 
-        // Check for existing category with the same name and gender
-        const existingCategoryByName = await Category.findOne({
+        const existingCategoryByName = await db.collection('categories').findOne({
             gender: validatedData.gender,
             name: validatedData.name,
         });
@@ -129,8 +118,7 @@ export async function POST(request: NextRequest) {
             throw new ApiError("A category with this name already exists for the specified gender", 409);
         }
 
-        // Check for existing category with the same href and gender
-        const existingCategoryByHref = await Category.findOne({
+        const existingCategoryByHref = await db.collection('categories').findOne({
             gender: validatedData.gender,
             href: validatedData.href,
         });
@@ -139,11 +127,18 @@ export async function POST(request: NextRequest) {
             throw new ApiError("A category with this URL already exists for the specified gender", 409);
         }
 
-        // Create and save the new category
-        const newCategory = new Category(validatedData);
-        await newCategory.save();
+        const newCategory = {
+            ...validatedData,
+            createdAt: new Date(),
+            updatedAt: new Date()
+        };
 
-        return NextResponse.json(newCategory.toObject(), { status: 201 });
+        const result = await db.collection('categories').insertOne(newCategory);
+
+        return NextResponse.json(
+            { ...newCategory, _id: result.insertedId.toString() },
+            { status: 201 }
+        );
     } catch (error) {
         return handleApiError(error);
     }
@@ -151,8 +146,7 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
     try {
-        await dbConnect();
-
+        const db = client.db();
         const { searchParams } = new URL(request.url);
         const id = searchParams.get("id");
 
@@ -160,25 +154,26 @@ export async function DELETE(request: NextRequest) {
             throw new ApiError("Category ID is required", 400);
         }
 
-        // Find and delete the category
-        const deletedCategory = await Category.findByIdAndDelete(id);
+        const result = await db.collection('categories').findOneAndDelete({
+            _id: new ObjectId(id)
+        });
 
-        if (!deletedCategory) {
+        if (!result.value) {
             throw new ApiError("Category not found", 404);
         }
 
         return NextResponse.json(
-            { message: "Category deleted successfully", data: deletedCategory },
+            { message: "Category deleted successfully", data: result.value },
             { status: 200 }
         );
     } catch (error) {
         return handleApiError(error);
     }
 }
+
 export async function PUT(request: NextRequest) {
     try {
-        await dbConnect();
-
+        const db = client.db();
         const { searchParams } = new URL(request.url);
         const id = searchParams.get("id");
 
@@ -188,47 +183,49 @@ export async function PUT(request: NextRequest) {
 
         const body = await request.json();
         const validatedData = CategorySchema.parse(body) as CategoryInput;
-
-        // Normalize the href to lowercase
         validatedData.href = validatedData.href.toLowerCase();
 
-        // Check for existing category with the same name and gender
-        const existingCategoryByName = await Category.findOne({
+        const existingCategoryByName = await db.collection('categories').findOne({
             gender: validatedData.gender,
             name: validatedData.name,
-            _id: { $ne: id }, // Exclude the current category
+            _id: { $ne: new ObjectId(id) },
         });
 
         if (existingCategoryByName) {
             throw new ApiError("A category with this name already exists for the specified gender", 409);
         }
 
-        // Check for existing category with the same href and gender
-        const existingCategoryByHref = await Category.findOne({
+        const existingCategoryByHref = await db.collection('categories').findOne({
             gender: validatedData.gender,
             href: validatedData.href,
-            _id: { $ne: id }, // Exclude the current category
+            _id: { $ne: new ObjectId(id) },
         });
 
         if (existingCategoryByHref) {
             throw new ApiError("A category with this URL already exists for the specified gender", 409);
         }
 
-        // Update the category
-        const updatedCategory = await Category.findByIdAndUpdate(id, validatedData, {
-            new: true, // Return the updated document
-            runValidators: true, // Ensure validation is run
-        });
+        const updateData = {
+            ...validatedData,
+            updatedAt: new Date()
+        };
 
-        if (!updatedCategory) {
+        const result = await db.collection('categories').findOneAndUpdate(
+            { _id: new ObjectId(id) },
+            { $set: updateData },
+            { returnDocument: 'after' }
+        );
+
+        if (!result.value) {
             throw new ApiError("Category not found", 404);
         }
 
-        return NextResponse.json(updatedCategory.toObject(), { status: 200 });
+        return NextResponse.json(result.value, { status: 200 });
     } catch (error) {
         return handleApiError(error);
     }
 }
+
 // Routing Configuration
 export const dynamic = "force-dynamic";
 export const revalidate = 0;

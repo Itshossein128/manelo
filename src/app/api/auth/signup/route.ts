@@ -1,58 +1,27 @@
 import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
-import dbConnect from "@/utils/db";
-import User from "@/models/User";
-import { SignJWT } from "jose"; // Use jose for Edge compatibility
+import client from "@/utils/db";
+import { saltAndHashPassword } from "@/utils/password";
 
-export async function POST(request: Request) {
+export async function POST(req: Request) {
   try {
-    const { email, password } = await request.json();
-
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Connect to MongoDB
-    await dbConnect();
-
-    // Check if the user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return NextResponse.json({ message: "User already exists" }, { status: 400 });
+    const { email, password } = await req.json();
+    if (!email || !password) {
+      return NextResponse.json({ error: "Email and password are required" }, { status: 400 });
     }
-
-    // Save the user to MongoDB
-    const user = new User({
-      email,
-      password: hashedPassword,
-      role: "user", // Default role
-    });
-    await user.save();
-
-    // Create a JWT token for the user
-    const secret = new TextEncoder().encode(process.env.NEXTAUTH_SECRET!);
-    const token = await new SignJWT({ id: user._id, email: user.email, role: user.role })
-      .setProtectedHeader({ alg: "HS256" })
-      .setIssuedAt()
-      .setExpirationTime("1h")
-      .sign(secret);
-
-    // Set the token as a cookie
-    const response = NextResponse.json(
-      { message: "User created and logged in successfully", user },
-      { status: 201 }
-    );
-
-    response.cookies.set("authToken", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 3600, // 1 hour
-      path: "/",
-    });
-
-    return response;
+    await client.connect();
+    const db = client.db();
+    const existingUser = await db.collection("users").findOne({ email });
+    if (existingUser) {
+      return NextResponse.json({ error: "User already exists" }, { status: 409 });
+    }
+    const hashedPassword = await saltAndHashPassword(password);
+    const newUser = { email, password: hashedPassword, role: "user", createdAt: new Date() };
+    await db.collection("users").insertOne(newUser);
+    return NextResponse.json({ message: "User created successfully" }, { status: 201 });
   } catch (error) {
     console.error("Signup error:", error);
-    return NextResponse.json({ message: "An error occurred during signup" }, { status: 500 });
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
+
+export const runtime = "nodejs"; // برای MongoDB

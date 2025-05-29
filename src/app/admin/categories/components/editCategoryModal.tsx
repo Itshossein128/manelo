@@ -1,5 +1,5 @@
 import Select from "@/app/components/ui/select/select";
-import { putAdminCategoryApi } from "@/app/services/category";
+import { putAdminCategoryApi } from "@/app/services/categoryService";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import {

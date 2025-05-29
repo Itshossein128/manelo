@@ -1,26 +1,21 @@
-"use client";
 import Image from "next/image";
 import Link from "next/link";
 import HoverDropDown from "../dropdown/hoverDropDown/hoverDropDown";
 import NavMenuDropDown from "../dropdown/navMenuDropDown/navMenuDropDown";
 import ClickDropDown from "../dropdown/clickDropDown/clickDropDown";
+<<<<<<< HEAD:src/components/ui/header/header.tsx
 import { useEffect, useState } from "react";
 import { getUserCategoryApi } from "@/services/category";
 import { TCategory } from "@/admin/categories/page";
+=======
+import HeaderSearch from "./headerSearch";
+import { getServerCategories } from "@/app/services/categoryService";
+>>>>>>> 604a5fc953563d3b3f26da11d335c99a9144a88d:src/app/components/ui/header/header.tsx
 
-export default function Header() {
-  const [menCategories, setMenCategories] = useState<TCategory[]>([]);
-  const [womenCategories, setWomenCategories] = useState<TCategory[]>([]);
-  useEffect(() => {
-    getUserCategoryApi().then((res) => {
-      setMenCategories(
-        res.data.filter((category: TCategory) => category.gender === "men")
-      );
-      setWomenCategories(
-        res.data.filter((category: TCategory) => category.gender === "women")
-      );
-    });
-  }, []);
+export default async function Header() {
+  const categories = await getServerCategories();
+  const menCategories = categories.filter((category) => category.gender === "men");
+  const womenCategories = categories.filter((category) => category.gender === "women");
 
   return (
     <header className='sticky top-0 z-10 bg-white shadow-md grid grid-cols-[1fr_auto_1fr] border-t-29 border-primary-dark border-b-[5px] py-[10px] px-[101px]'>
@@ -114,6 +109,7 @@ export default function Header() {
               height={36}
             />
           }
+          dropDownContent={<HeaderSearch />}
         />
 
         <ClickDropDown
@@ -125,6 +121,7 @@ export default function Header() {
               height={36}
             ></Image>
           }
+          dropDownContent={<div>Login/Register</div>}
         />
 
         <div>

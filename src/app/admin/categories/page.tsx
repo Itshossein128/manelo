@@ -4,15 +4,7 @@ import AddCategoryForm from "./components/addCategoryForm";
 import { useState } from "react";
 import CategoriesTable from "./components/categoriesTable";
 import EditCategoryForm from "./components/editCategoryModal";
-
-export type TCategory = {
-  _id: string;
-  name: string;
-  gender: "women" | "men";
-  href: string;
-  createdAt?: string;
-  updatedAt?: string;
-};
+import { TCategory } from "@/app/types/cateogy";
 
 const Categories = () => {
 

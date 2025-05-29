@@ -14,14 +14,25 @@
     "jsx": "preserve",
     "incremental": true,
     "plugins": [{ "name": "next" }],
-    "baseUrl": "src",
+    "baseUrl": ".",
     "paths": {
+<<<<<<< HEAD
       "@/*": ["./*"],
       "@/utils/*": ["./utils/*"],
       "@/hooks/*": ["./hooks/*"],
       "@/contexts/*": ["./contexts/*"],
       "@/components/*": ["./components/*"],
       "@/models/*": ["./utils/models/*"]
+=======
+      "@/*": ["src/*"],
+      "@/utils/*": ["src/app/utils/*"],
+      "@/hooks/*": ["src/app/hooks/*"],
+      "@/services/*": ["src/app/services/*"],
+      "@/contexts/*": ["src/app/contexts"],
+      "@/components/*": ["src/app/components/*"],
+      "@/types/*": ["src/app/types/*"],
+      "@/models/*": ["src/app/utils/models/*"]
+>>>>>>> 604a5fc953563d3b3f26da11d335c99a9144a88d
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
