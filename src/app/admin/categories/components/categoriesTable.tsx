@@ -88,7 +88,7 @@ export default function CategoriesTable({
       id: "actions",
       header: "Actions",
       cell: (info) => (
-        <div className='flex gap-1 w-[max-content]'>
+        <div className='flex gap-1 w-max'>
           <button
             className='btn btn-sm'
             onClick={() => {
@@ -156,7 +156,7 @@ export default function CategoriesTable({
           </div>
 
           {/* Table */}
-          <div className='overflow-x-auto border border-gray rounded mt-4'>
+          <div className='overflow-x-auto border border-gray rounded-sm mt-4'>
             <table className='table text-nowrap'>
               <thead>
                 {table.getHeaderGroups().map((headerGroup) => (

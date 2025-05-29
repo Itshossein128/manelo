@@ -23,7 +23,7 @@ export default function Header() {
   }, []);
 
   return (
-    <header className='sticky top-0 z-10 bg-white shadow-md grid grid-cols-[1fr_auto_1fr] border-t-[29px] border-primary-dark border-b-[5px] py-[10px] px-[101px]'>
+    <header className='sticky top-0 z-10 bg-white shadow-md grid grid-cols-[1fr_auto_1fr] border-t-29 border-primary-dark border-b-[5px] py-[10px] px-[101px]'>
       <div className='flex gap-[19px] items-center'>
         <Image
           src={"/manelo-logo.png"}

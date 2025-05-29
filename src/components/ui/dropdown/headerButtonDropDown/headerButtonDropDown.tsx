@@ -19,7 +19,7 @@ export default function HeaderButtonDropDown({ title, setController }) {
         <div className='mt-1'>
           <div
             role='tablist'
-            className='tabs tabs-lifted [&>a.tab-active]:!rounded bg-tint-lightest grid-cols-2'
+            className='tabs tabs-lifted [&>a.tab-active]:rounded-sm! bg-tint-lightest grid-cols-2'
           >
             <a
               role='tab'

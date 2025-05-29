@@ -81,13 +81,13 @@ export default function EditCategoryForm({
 
   return (
     <div
-      className={`fixed left-0 top-0 flex items-center justify-center backdrop-blur-sm w-[100vw] h-[100vh] bg-slate-950/20 z-50 transition ${
+      className={`fixed left-0 top-0 flex items-center justify-center backdrop-blur-xs w-screen h-screen bg-slate-950/20 z-50 transition ${
         isEditing
           ? "opacity-100 pointer-events-auto"
           : "pointer-events-none opacity-0"
       }`}
     >
-      <div className='p-10 rounded max-w-md w-full relative bg-white shadow-md'>
+      <div className='p-10 rounded-sm max-w-md w-full relative bg-white shadow-md'>
         <button
           className='btn btn-sm bg-white hover:bg-white shadow-none border-0 btn-circle absolute top-0 right-0 flex items-center justify-center'
           onClick={() => setIsEditing(false)}

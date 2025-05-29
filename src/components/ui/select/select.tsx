@@ -46,7 +46,7 @@ export default function Select({
     <div
       ref={dropdownRef}
       className={`input input-bordered w-full flex items-center justify-start cursor-pointer relative ${
-        showDropDown && "!border-gray-600"
+        showDropDown && "border-gray-600!"
       } ${className}`}
       onClick={() => setShowDropDown((prev) => !prev)}
     >
@@ -63,7 +63,7 @@ export default function Select({
         className='absolute right-3 top-3'
       />
       {showDropDown && (
-        <div className='border border-gray-400 rounded absolute top-full left-0 mt-1 bg-inherit w-full z-10'>
+        <div className='border border-gray-400 rounded-sm absolute top-full left-0 mt-1 bg-inherit w-full z-10'>
           {options.map((item) => (
             <div
               key={item.value}

@@ -5,13 +5,16 @@ export async function middleware(request: NextRequest) {
   const authToken = request.cookies.get("authToken")?.value;
 
   if (!authToken) {
+    console.log('redirect')
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
   try {
     const secret = new TextEncoder().encode(process.env.NEXTAUTH_SECRET!);
+    
     const { payload } = await jwtVerify(authToken, secret);
-
+    console.log('reached');
+    
     // Define protected routes and their required roles
     const protectedRoutes = [
       { path: "/dashboard", role: "user" },
@@ -34,7 +37,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   } catch (error) {
     console.error("Token verification error:", error);
-    return NextResponse.redirect(new URL("/login", request.url));
+    // return NextResponse.redirect(new URL("/login", request.url));
   }
 }
 

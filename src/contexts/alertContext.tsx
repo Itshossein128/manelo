@@ -37,7 +37,7 @@ export const AlertProvider = ({ children }) => {
     <AlertContext.Provider value={{ showAlert, closeAlert }}>
       {children}
       <div
-        className={`bg-slate-950/20 w-[100vw] h-[100vh] backdrop-blur-sm fixed top-0 left-0 z-50 transition ${
+        className={`bg-slate-950/20 w-screen h-screen backdrop-blur-xs fixed top-0 left-0 z-50 transition ${
           isVisible
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-0"
@@ -53,13 +53,13 @@ export const AlertProvider = ({ children }) => {
         <p>{message}</p>
         <div className='flex gap-2'>
           <button
-            className='btn bg-zinc-50 border-zinc-50 shadow'
+            className='btn bg-zinc-50 border-zinc-50 shadow-sm'
             onClick={onConfirm}
           >
             Yes
           </button>
           <button
-            className='btn bg-zinc-50 border-zinc-50 shadow'
+            className='btn bg-zinc-50 border-zinc-50 shadow-sm'
             onClick={onCancel}
           >
             No
