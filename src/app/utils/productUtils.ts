@@ -28,12 +28,7 @@ export const ProductSchema = z.object({
         .min(10, "Description must be at least 10 characters")
         .max(500, "Description cannot exceed 500 characters"),
     colors: z
-        .array(
-            z.object({
-                color: z.string().min(1, "Color cannot be empty"), // Hex color code or name
-                stock: z.string().regex(/^\d+$/, "Stock must be a positive integer"), // Stock as string (to be parsed later)
-            })
-        )
+        .array(z.string().min(1, "Color cannot be empty"))
         .min(1, "At least one color is required"),
     gender: z.enum(["men", "women"], {
         errorMap: () => ({ message: "Gender must be either 'men' or 'women'" }),
@@ -92,3 +87,4 @@ export function handleApiError(error: unknown): NextResponse {
         { status: statusCode }
     );
 }
+

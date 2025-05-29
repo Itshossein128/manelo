@@ -1,4 +1,4 @@
-import Header from "./components/header";
+import Image from "next/image";
 
 export default function AuthLayout({
   children,
@@ -6,11 +6,17 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
-      <Header />
-      <main className='min-h-[calc(100vh-57px)] max-h-[calc(100vh-57px)] flex items-center justify-center bg-gray-100'>
-        {children}
-      </main>
-    </>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+      <div className="mb-8">
+        <Image
+          src="/manelo-logo.png"
+          alt="Manelo Logo"
+          width={100}
+          height={100}
+          className="mx-auto"
+        />
+      </div>
+      {children}
+    </div>
   );
 }

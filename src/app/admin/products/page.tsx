@@ -10,10 +10,11 @@ export type TProduct = {
   name: string;
   category: string; // Assuming category is a string, you can adjust this based on your needs
   price: number;
-  stock: number;
+  colors: { color: string; stock: number }[];
   description?: string;
   createdAt?: string;
   updatedAt?: string;
+  images: string[];
 };
 
 const Products = () => {
@@ -21,10 +22,10 @@ const Products = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Products Management</h1>
+    <div className='p-4'>
+      <h1 className='text-2xl font-bold mb-4'>Products Management</h1>
       <AddProductForm />
-      <div className="overflow-x-auto mt-6">
+      <div className='overflow-x-auto mt-6'>
         <ProductsTable
           setIsEditing={setIsEditing}
           setEditingProduct={setEditingProduct}

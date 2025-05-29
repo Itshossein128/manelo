@@ -1,7 +1,24 @@
 import axios from "axios";
-import { TCategory } from "../admin/categories/page";
+import { TCategory } from "../types/cateogy";
 
 type TCategoryBody = Omit<TCategory, '_id'>
+
+// server-side category fetch
+export async function getServerCategories(options?: { revalidate?: number }) {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/user/categories`, {
+        next: {
+            revalidate: options?.revalidate ?? 60 // Default to 1 minute if not specified
+        }
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to fetch categories');
+    }
+
+    const data = await response.json();
+    return data.data as TCategory[];
+}
+
 // admin APIs
 export const getAdminCategoryApi = async () => {
     const response = await axios.get("/api/admin/categories");
@@ -25,5 +42,7 @@ export const deleteAdminCategoryApi = async (categoryId: string) => {
 //user Apis
 export const getUserCategoryApi = async () => {
     const response = await axios.get("/api/user/categories");
+    console.log("res", response);
+
     return response.data;
 };

@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
-
+console.log("Mongoose models:", mongoose.models);
 // Check if the model already exists to avoid recompilation
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 

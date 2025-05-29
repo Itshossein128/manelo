@@ -1,16 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
-import dbConnect from "@/utils/db";
-import Product from "@/utils/models/Product";
+import client from "@/utils/db";
 import { ProductSchema, ProductInput, handleApiError, ApiError } from "@/utils/productUtils";
+import { ObjectId } from "mongodb";
+import { writeFile } from 'fs/promises';
+import { join } from 'path';
+import { v4 as uuidv4 } from 'uuid';
 
 export async function GET(
     request: NextRequest,
     { params }: { params: { id: string } }
 ) {
     try {
-        await dbConnect();
+        const db = client.db();
+        const product = await db.collection('products').findOne({
+            _id: new ObjectId(params.id)
+        });
 
-        const product = await Product.findById(params.id).lean();
         if (!product) {
             throw new ApiError("Product not found", 404);
         }
@@ -22,41 +27,67 @@ export async function GET(
 }
 
 export async function PUT(
-    request: NextRequest,
+    req: Request,
     { params }: { params: { id: string } }
 ) {
     try {
-        await dbConnect();
+        const formData = await req.formData();
+        const images = formData.getAll('images') as File[];
+        const productData = JSON.parse(formData.get('data') as string);
 
-        const body = await request.json();
-        const validatedData = ProductSchema.parse(body) as ProductInput;
+        // Create uploads directory if it doesn't exist
+        const uploadDir = join(process.cwd(), 'public/uploads');
+        try {
+            await writeFile(join(uploadDir, '.gitkeep'), '');
+        } catch (error) {
+            console.error('Error creating uploads directory:', error);
+        }
 
-        // Check for existing product with the same name and gender (excluding the current product)
-        const existingProduct = await Product.findOne({
-            name: validatedData.name,
-            gender: validatedData.gender,
-            _id: { $ne: params.id }, // Exclude the current product
-        });
-        if (existingProduct) {
-            throw new ApiError(
-                "A product with this name already exists for the specified gender",
-                409
+        // Handle image uploads
+        const imageUrls = await Promise.all(
+            images.map(async (image) => {
+                const bytes = await image.arrayBuffer();
+                const buffer = Buffer.from(bytes);
+
+                // Create unique filename
+                const uniqueFilename = `${uuidv4()}-${image.name}`;
+                const filePath = join(uploadDir, uniqueFilename);
+                
+                // Write file
+                await writeFile(filePath, buffer);
+                
+                // Return the public URL
+                return `/uploads/${uniqueFilename}`;
+            })
+        );
+
+        // Combine existing images with new ones
+        const updatedProductData = {
+            ...productData,
+            images: [...(productData.images || []), ...imageUrls],
+            updatedAt: new Date(),
+        };
+
+        const db = client.db();
+        const result = await db.collection('products').updateOne(
+            { _id: params.id },
+            { $set: updatedProductData }
+        );
+
+        if (result.matchedCount === 0) {
+            return NextResponse.json(
+                { error: "Product not found" },
+                { status: 404 }
             );
         }
 
-        // Update the product
-        const updatedProduct = await Product.findByIdAndUpdate(
-            params.id,
-            validatedData,
-            { new: true, runValidators: true }
-        );
-        if (!updatedProduct) {
-            throw new ApiError("Product not found", 404);
-        }
-
-        return NextResponse.json(updatedProduct.toObject(), { status: 200 });
+        return NextResponse.json(updatedProductData, { status: 200 });
     } catch (error) {
-        return handleApiError(error);
+        console.error('Error in product update:', error);
+        return NextResponse.json(
+            { error: 'Failed to update product' },
+            { status: 500 }
+        );
     }
 }
 
@@ -65,17 +96,17 @@ export async function DELETE(
     { params }: { params: { id: string } }
 ) {
     try {
-        await dbConnect();
+        const db = client.db();
+        const result = await db.collection('products').deleteOne({ _id: params.id });
 
-        const deletedProduct = await Product.findByIdAndDelete(params.id);
-        if (!deletedProduct) {
-            throw new ApiError("Product not found", 404);
+        if (result.deletedCount === 0) {
+            return NextResponse.json(
+                { error: "Product not found" },
+                { status: 404 }
+            );
         }
 
-        return NextResponse.json(
-            { message: "Product deleted successfully", data: deletedProduct },
-            { status: 200 }
-        );
+        return NextResponse.json({ success: true }, { status: 200 });
     } catch (error) {
         return handleApiError(error);
     }

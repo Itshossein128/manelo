@@ -1,59 +1,73 @@
+import { z } from "zod";
 import { NextRequest, NextResponse } from "next/server";
-import dbConnect from "@/utils/db";
-import Product from "@/utils/models/Product";
-import { ProductSchema, ProductInput, handleApiError, ApiError } from "@/utils/productUtils";
+import client from "@/utils/db";
+import { handleApiError } from "@/utils/productUtils";
+import { writeFile } from 'fs/promises';
+import { join } from 'path';
+import { v4 as uuidv4 } from 'uuid';
 
-export async function POST(request: NextRequest) {
+export async function POST(req: Request) {
     try {
-        await dbConnect();
+        const formData = await req.formData();
+        const images = formData.getAll('images') as File[];
+        const productData = JSON.parse(formData.get('data') as string);
 
-        const body = await request.json();
-        console.log("Request body:", body); // Log the request body for debugging
-
-        // Validate the request body against the schema
-        const validatedData = ProductSchema.parse(body) as ProductInput;
-
-        // Check for existing product with the same name and gender
-        const existingProduct = await Product.findOne({
-            name: validatedData.name,
-            gender: validatedData.gender,
-        });
-        if (existingProduct) {
-            throw new ApiError(
-                "A product with this name already exists for the specified gender",
-                409
-            );
+        // Create uploads directory if it doesn't exist
+        const uploadDir = join(process.cwd(), 'public/uploads');
+        try {
+            await writeFile(join(uploadDir, '.gitkeep'), '');
+        } catch (error) {
+            console.error('Error creating uploads directory:', error);
         }
 
-        // Transform the `colors` array into the required format
-        const transformedData = {
-            ...validatedData,
-            colors: validatedData.colors.map(({ color }) => color),
-            stock: validatedData.colors.reduce((acc, { color, stock }) => {
-                acc[color] = parseInt(stock, 10); // Convert stock to number
-                return acc;
-            }, {} as Record<string, number>),
+        // Handle image uploads
+        const imageUrls = await Promise.all(
+            images.map(async (image) => {
+                const bytes = await image.arrayBuffer();
+                const buffer = Buffer.from(bytes);
+
+                // Create unique filename
+                const uniqueFilename = `${uuidv4()}-${image.name}`;
+                const filePath = join(uploadDir, uniqueFilename);
+
+                // Write file
+                await writeFile(filePath, buffer);
+
+                // Return the public URL
+                return `${uniqueFilename}`;
+            })
+        );
+
+        // Add image URLs to product data
+        const finalProductData = {
+            ...productData,
+            images: imageUrls,
+            createdAt: new Date(),
+            updatedAt: new Date(),
         };
 
-        // Create and save the new product
-        const newProduct = new Product(transformedData);
-        await newProduct.save();
+        // TODO: Save product data to your database
+        const db = client.db();
+        await db.collection('products').insertOne(finalProductData);
 
-        return NextResponse.json(newProduct.toObject(), { status: 201 });
+        return NextResponse.json(finalProductData, { status: 201 });
     } catch (error) {
-        return handleApiError(error);
+        console.error('Error in product creation:', error);
+        return NextResponse.json(
+            { error: 'Failed to create product' },
+            { status: 500 }
+        );
     }
 }
 
 export async function GET(request: NextRequest) {
     try {
-        await dbConnect();
-
+        const db = client.db();
         const { searchParams } = new URL(request.url);
-        const gender = searchParams.get("gender"); // Optional: Filter by gender
+        const gender = searchParams.get("gender");
 
         const query = gender ? { gender } : {};
-        const products = await Product.find(query).lean();
+        const products = await db.collection('products').find(query).toArray();
 
         return NextResponse.json({ data: products }, { status: 200 });
     } catch (error) {

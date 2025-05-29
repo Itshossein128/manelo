@@ -10,7 +10,8 @@ export interface IProduct extends Document {
   colors: string[];
   sizes: string[];
   gender: "men" | "women";
-  
+  image: unknown;
+
 }
 
 export type ProductInput = {
@@ -23,5 +24,6 @@ export type ProductInput = {
   colors: string[];
   sizes: string[];
   gender: "men" | "women";
-  
+  image: unknown;
+
 };
