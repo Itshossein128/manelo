@@ -1,14 +1,15 @@
 "use client";
 import { ReactElement, useState } from "react";
-import "@/app/components/ui/header/headerSearch";
 import HeaderButtonDropDown from "../headerButtonDropDown/headerButtonDropDown";
 type Tprops = {
   interactiveElement: ReactElement;
   containerClassName?: string;
+  dropDownContent: ReactElement;
 };
 export default function ClickDropDown({
   interactiveElement,
   containerClassName = "",
+  dropDownContent,
 }: Tprops) {
   const [dropDown, setDropDown] = useState(false);
   return (
@@ -27,7 +28,9 @@ export default function ClickDropDown({
         <HeaderButtonDropDown
           title={`SEARCH`}
           setController={() => setDropDown(false)}
-        />
+        >
+          {dropDownContent}
+        </HeaderButtonDropDown>
       </div>
     </div>
   );

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import dbConnect from "@/utils/db";
-import Category from "@/models/Category";
+import client from "@/app/utils/db";
 
 interface CategoryForUser {
     name: string;
@@ -10,17 +9,18 @@ interface CategoryForUser {
 
 export async function GET(request: NextRequest) {
     try {
-        await dbConnect();
-
+        const db = client.db();
         const { searchParams } = new URL(request.url);
         const gender = searchParams.get("gender") as CategoryForUser["gender"] | null;
 
         const query = gender ? { gender } : {};
 
-        // Fetch only the required fields
-        const categories = await Category.find(query)
-            .select("name href gender")
-            .lean<CategoryForUser[]>();
+        // Fetch categories using MongoDB client
+        const categories = await db
+            .collection("categories")
+            .find(query)
+            .project({ name: 1, href: 1, gender: 1, _id: 0 })
+            .toArray() as CategoryForUser[];
 
         return NextResponse.json(
             {

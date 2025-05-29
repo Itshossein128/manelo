@@ -110,3 +110,41 @@ h6 {
 }
 @import url("./styles/dropDown.css");
 @import url("./styles/header.css");
+/* Add this to your global CSS file */
+.toolbarClassName {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.wrapperClassName {
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.editorClassName {
+  min-height: 200px;
+  padding: 10px;
+}
+
+.ce-block__content,
+.ce-toolbar__content {
+  max-width: unset;
+  margin: 0 8px 0 46px;
+}
+
+[data-item-name="list"]:last-of-type {
+  display: none !important;
+}
+
+/* Hide scrollbar for Chrome, Safari, and Edge */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for Firefox */
+.scrollbar-hide {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}

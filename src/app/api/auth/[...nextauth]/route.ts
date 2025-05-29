@@ -1,62 +1,44 @@
 import NextAuth from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
-import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
-import dbConnect from "@/utils/db";
-import User from "@/models/User";
-import { SignJWT, jwtVerify } from "jose";
+import Credentials from "next-auth/providers/credentials";
+import client from "@/utils/db";
+import { verifyPassword } from "@/utils/password";
 
-const handler = NextAuth({
+export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-    CredentialsProvider({
-      name: "Credentials",
+    Credentials({
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        email: { label: "Email", required: true },
+        password: { label: "Password", required: true },
       },
       async authorize(credentials) {
-        // Connect to MongoDB
-        await dbConnect();
-
-        // Fetch the user from MongoDB
-        const user = await User.findOne({ email: credentials?.email });
-
-        if (user && (await bcrypt.compare(credentials?.password || "", user.password))) {
-          return { id: user._id.toString(), email: user.email, role: user.role };
+        await client.connect();
+        const db = client.db();
+        const user = await db.collection("users").findOne({ email: credentials.email });
+        if (user && await verifyPassword(credentials.password, user.password)) {
+          return { id: user._id.toString(), email: user.email, role: user.role || "user" };
         }
-
         return null;
       },
     }),
   ],
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
-    async jwt({ token, user }) {
+    jwt({ token, user }) {
       if (user) {
+        token.id = user.id;
         token.role = user.role;
       }
       return token;
     },
-    async session({ session, token }) {
+    session({ session, token }) {
+      session.user.id = token.id;
       session.user.role = token.role;
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
-  cookies: {
-    sessionToken: {
-      name: "authToken", // Use the same cookie name as in your signup route
-      options: {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        path: "/",
-      },
-    },
-  },
 });
 
-export { handler as GET, handler as POST };
+export const GET = handlers.GET;
+export const POST = handlers.POST;

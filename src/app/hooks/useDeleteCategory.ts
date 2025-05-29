@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteAdminCategoryApi } from "../services/category";
+import { deleteAdminCategoryApi } from "../services/categoryService";
 import { toast } from "react-toastify";
 
 export const useDeleteCategory = () => {
