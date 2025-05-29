@@ -5,8 +5,8 @@ import HoverDropDown from "../dropdown/hoverDropDown/hoverDropDown";
 import NavMenuDropDown from "../dropdown/navMenuDropDown/navMenuDropDown";
 import ClickDropDown from "../dropdown/clickDropDown/clickDropDown";
 import { useEffect, useState } from "react";
-import { getUserCategoryApi } from "@/app/services/category";
-import { TCategory } from "@/app/admin/categories/page";
+import { getUserCategoryApi } from "@/services/category";
+import { TCategory } from "@/admin/categories/page";
 
 export default function Header() {
   const [menCategories, setMenCategories] = useState<TCategory[]>([]);

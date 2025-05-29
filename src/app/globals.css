@@ -108,5 +108,5 @@ h6 {
 .input-bordered {
   @apply border-gray-darker rounded focus:border-gray-600;
 }
-@import url("./styles/dropDown.css");
-@import url("./styles/header.css");
+@import url("@/styles/dropDown.css");
+@import url("@/styles/header.css");

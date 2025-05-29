@@ -1,6 +1,6 @@
 "use client";
 import { ReactElement, useState } from "react";
-import "@/app/components/ui/header/headerSearch";
+import "@/components/ui/header/headerSearch";
 import HeaderButtonDropDown from "../headerButtonDropDown/headerButtonDropDown";
 type Tprops = {
   interactiveElement: ReactElement;
